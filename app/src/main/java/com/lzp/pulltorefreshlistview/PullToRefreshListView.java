@@ -36,6 +36,8 @@ public class PullToRefreshListView extends ListView {
     private ProgressBar proBarLoading;
     private ImageView imagePull;
 
+    private RotateAnimation flipAnimation,reverseFlipAnimation;
+
     private static enum STATE {IDLE, PULL_REFRESS, RELEASE_REFRESH, LOADING}
 
     private STATE mState = STATE.IDLE;
@@ -82,6 +84,16 @@ public class PullToRefreshListView extends ListView {
         addHeaderView(pullRefreshHeader);
         ViewConfiguration config = ViewConfiguration.get(getContext());
         mTouchSlop = config.getScaledTouchSlop();
+
+        flipAnimation = new RotateAnimation(0,180,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
+        flipAnimation.setInterpolator(new LinearInterpolator());
+        flipAnimation.setDuration(250);
+        flipAnimation.setFillAfter(true);
+
+        reverseFlipAnimation = new RotateAnimation(-180,0,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
+        reverseFlipAnimation.setInterpolator(new LinearInterpolator());
+        reverseFlipAnimation.setDuration(250);
+        reverseFlipAnimation.setFillAfter(true);
     }
 
     @Override
@@ -205,6 +217,8 @@ public class PullToRefreshListView extends ListView {
                 animation.setFillAfter(true);
                 imagePull.clearAnimation();
                 imagePull.startAnimation(animation);
+//                imagePull.clearAnimation();
+//                imagePull.startAnimation(flipAnimation);
                 Log.e(TAG,"RELEASE_REFRESH");
                 break;
             case PULL_REFRESS:
@@ -212,6 +226,8 @@ public class PullToRefreshListView extends ListView {
                 animation.setFillAfter(true);
                 imagePull.clearAnimation();
                 imagePull.startAnimation(animation);
+//                imagePull.clearAnimation();
+//                imagePull.startAnimation(reverseFlipAnimation);
                 Log.e(TAG,"PULL_REFRESS");
             case IDLE:
                 msg = "下拉刷新";
