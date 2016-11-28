@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lzp.pulltorefreshlistview.PullRefreshHeaderLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/aaaaaaaaa"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#363636"
+                android:paddingBottom="12dp"
+                android:paddingTop="12dp">
+    <FrameLayout
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:layout_marginLeft="60dp">
+
+        <ProgressBar
+            android:id="@+id/refresh_progress"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/common_loading5"
+            android:visibility="invisible"/>
+
+        <ImageView
+            android:id="@+id/refresh_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="图片"
+            android:scaleType="fitCenter"
+            android:src="@drawable/refresh_arrow"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/refresh_msg_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="下拉刷新"
+            android:textColor="@color/skin_over_header"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+</com.lzp.pulltorefreshlistview.PullRefreshHeaderLayout>
