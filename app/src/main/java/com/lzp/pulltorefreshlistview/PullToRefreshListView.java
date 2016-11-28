@@ -2,7 +2,6 @@ package com.lzp.pulltorefreshlistview;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -12,6 +11,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -114,7 +117,6 @@ public class PullToRefreshListView extends ListView {
 
     private void doMoveEvent(MotionEvent ev) {
         if (isFirstItemVisible()) {
-            Log.e(TAG, mState.toString());
             float deltaY = ev.getY() - mLastMotionY;
             switch (mState) {
                 case IDLE:
@@ -147,6 +149,11 @@ public class PullToRefreshListView extends ListView {
                     }
                     break;
                 case LOADING:
+                    if (Math.abs(deltaY) > mTouchSlop) {
+                        int topPadding = (int) ((deltaY - pullRefreshHeaderHeight) /
+                                PULL_FRESH_RATE);
+                        updateRefreshHeaderTopPadding(topPadding);
+                    }
                     break;
             }
         }
@@ -155,13 +162,6 @@ public class PullToRefreshListView extends ListView {
 
     private void updateRefreshHeaderTopPadding(int topPadding) {
         pullRefreshHeader.setPaddingTop(topPadding);
-    }
-
-    private void updateRefreshHeaderTopPaddingWithAnim(int topPadding) {
-        ObjectAnimator animator = ObjectAnimator.ofInt(pullRefreshHeader, "paddingTop",
-                topPadding);
-        animator.setDuration(100);
-        animator.start();
     }
 
     private void stateToLoading() {
@@ -175,7 +175,8 @@ public class PullToRefreshListView extends ListView {
     }
 
     private void completLoading() {
-        resetRefreshHeaderWithAnim();
+        smoothScrollToPosition(0);
+        resetRefreshHeader();
     }
 
     private void resetRefreshHeader() {
@@ -200,8 +201,18 @@ public class PullToRefreshListView extends ListView {
                 msg = "释放立即刷新";
                 imagePull.setVisibility(View.VISIBLE);
                 proBarLoading.setVisibility(View.INVISIBLE);
+                Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.rotate1);
+                animation.setFillAfter(true);
+                imagePull.clearAnimation();
+                imagePull.startAnimation(animation);
+                Log.e(TAG,"RELEASE_REFRESH");
                 break;
             case PULL_REFRESS:
+                animation = AnimationUtils.loadAnimation(getContext(),R.anim.rotate2);
+                animation.setFillAfter(true);
+                imagePull.clearAnimation();
+                imagePull.startAnimation(animation);
+                Log.e(TAG,"PULL_REFRESS");
             case IDLE:
                 msg = "下拉刷新";
                 imagePull.setVisibility(View.VISIBLE);
@@ -209,6 +220,7 @@ public class PullToRefreshListView extends ListView {
                 break;
             case LOADING:
                 msg = "正在刷新...";
+                imagePull.clearAnimation();
                 imagePull.setVisibility(View.INVISIBLE);
                 proBarLoading.setVisibility(View.VISIBLE);
                 break;
